@@ -5,7 +5,7 @@ import gnvext
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
 SECRET_KEY = gnvext.StringEnvVariable(
-    name='DJANGO_SECRET_KEY', 
+    name='DJANGO_SECRET_KEY',
     default='',
 ).value
 
@@ -24,9 +24,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.postgres',
+    'rest_framework',
+    'corsheaders',
+    'users',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -35,6 +39,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = gnvext.CollectionEnvVariable(
+    name="CORS_ALLOWED_ORIGINS",
+    default=[],
+).value
 
 ROOT_URLCONF = 'config.urls'
 
@@ -58,26 +67,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': gnvext.StringEnvVariable(
+            name='DATABASE_ENGINE',
+            default=RuntimeError('db engine is not specified in .env'),
+        ).value,
         'NAME': gnvext.StringEnvVariable(
-            name='POSTGRESQL_DBNAME',
-            default='postgres',
+            name='DATABASE_NAME',
+            default=RuntimeError('db name is not specified in .env'),
         ).value,
         'USER': gnvext.StringEnvVariable(
-            name='POSTGRESQL_USER',
-            default='postgres',
+            name='DATABASE_USER',
+            default=RuntimeError('db user is not specified in .env'),
         ).value,
         'PASSWORD': gnvext.StringEnvVariable(
-            name='POSTGRESQL_PASSWORD',
-            default='',
+            name='DATABASE_PASSWORD',
+            default=RuntimeError('db user password is not specified in .env'),
         ).value,
         'HOST': gnvext.StringEnvVariable(
-            name='POSTGRESQL_HOST',
-            default='127.0.0.1',
+            name='DATABASE_HOST',
+            default=RuntimeError('db host is not specified in .env'),
         ).value,
         'PORT': gnvext.StringEnvVariable(
-            name='POSTGRESQL_PORT',
-            default='5432',
+            name='DATABASE_PORT',
+            default=RuntimeError('db port is not specified in .env'),
         ).value,
     }
 }
@@ -109,6 +121,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.User'
