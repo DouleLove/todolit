@@ -1,4 +1,6 @@
+import pathlib
 import time
+import uuid
 
 import django.contrib.auth.models
 import django.contrib.auth.validators
@@ -9,7 +11,9 @@ from django.utils.translation import gettext_lazy as _
 class User(django.contrib.auth.models.AbstractUser):
 
     def generate_avatar_path(self, filename: str) -> str:
-        return f'uploads/{self.id}/{time.time()}_{filename}'
+        extension = pathlib.Path(filename).suffix
+        filename = uuid.uuid4()
+        return f'uploads/{self.username}/{time.time()}_{filename}{extension}'
 
     def __str__(self) -> str:
         return self.username
