@@ -29,6 +29,7 @@ class User(django.contrib.auth.models.AbstractUser):
     avatar = django.db.models.ImageField(
         _('avatar'),
         upload_to=generate_avatar_path,
+        null=True,
     )
 
     # removing email, first_name, last_name fields from the model
