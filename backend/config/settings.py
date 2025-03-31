@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'drfseriperm',
     'corsheaders',
     'users',
+    'tasks',
 ]
 
 MIDDLEWARE = [
